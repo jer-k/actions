@@ -1,0 +1,15 @@
+jobs:  
+  docker-build-and-publish:
+    name: Docker build And publish to Github Package Registry
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build and push the Docker container image to Github Package Registry
+      run: |
+        export REPO_NAME="$(echo $GITHUB_REPOSITORY | awk -F'/' '{print $2}')"
+        docker build -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${REPO_NAME}:${GITHUB_SHA:0:8} .
+        echo "${GITHUB_PACKAGE_REGISTRY_TOKEN}" | docker login docker.pkg.github.com -u ${GITHUB_ACTOR} --password-stdin
+        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${REPO_NAME}:${GITHUB_SHA:0:8}
+      env:
+        GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
