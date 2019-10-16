@@ -1,4 +1,4 @@
-name: RSpec with SimpleCov
+name: RSpec with SimpleCov for a Gem
 
 on: [push]
 
